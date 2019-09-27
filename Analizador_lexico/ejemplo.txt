@@ -1,4 +1,7 @@
-1234 lexico   9874
-ieufgwef
+1234 lexico12   9874
+#ieufgwef
 1234
 cc
+():[]:= [,]
+   +-*/%++--->;.{}<><=>====
+string = "esto es un string" , p12 []++
