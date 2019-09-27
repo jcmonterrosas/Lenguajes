@@ -27,6 +27,8 @@ def dt(estado, caracter):
             return 2
         elif re.match("\d", caracter):
             return 4
+        elif caracter == "\n" or caracter == " ":
+            return 1
         else:
             return -1
     elif estado == 2:
@@ -56,41 +58,37 @@ def dt(estado, caracter):
 
     
 def main():
-    archivo = open("ejemplo.txt","r")
-    texto_codigo = archivo.read()
-    archivo.close()
-    estado = 1
-    lexema = ""
-    fila = 1
-    columna = 1
-    print(texto_codigo)
-    for i in range(len(texto_codigo)):  
-        if re.match("$", texto_codigo[i]):
-            fila += 1
-            columna = 1
-
-        print(i)
-        lexema += texto_codigo[i]
-        estado = dt(estado, texto_codigo[i])
-        columna += 1
-        
-        if estado in estados_aceptacion:
-            i -= (estados_aceptacion[estado][1] + 2)
-            token_column = columna - len(lexema) 
-            lexema = lexema[:-estados_aceptacion[estado][1]]
-            token = Token(estados_aceptacion[estado][0], lexema, fila, token_column)
-            tokens_list.append(token.token_string())
+    filepath = 'ejemplo.txt'
+    fila = 0
+    with open(filepath) as archivo:        
+        for linea in archivo:
             estado = 1
             lexema = ""
-        if estado == -1:
-            tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
-            break
-        
-    
+            i = 0
+            fila += 1
+            linea += " "
+
+            while i < len(linea):  
+                lexema += linea[i]
+                estado = dt(estado, linea[i])
+                columna = (i + 2) - len(lexema) 
+
+                if estado in estados_aceptacion:
+                    i -= estados_aceptacion[estado][1]
+                    lexema = lexema[:-estados_aceptacion[estado][1]]
+                    columna += (len(lexema) - len(lexema.replace(" ", "")))
+                    token = Token(estados_aceptacion[estado][0], lexema.replace(" ", ""), fila, columna)
+                    tokens_list.append(token.token_string())
+                    estado = 1
+                    lexema = ""
+                if estado == -1:
+                    tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
+                    break
+                
+                i += 1
 
     for i in range(len(tokens_list)):
         print(tokens_list[i])
-    # print(tokens_list)
 
 # def identificar_token(estado):
 #     if estado == 3
