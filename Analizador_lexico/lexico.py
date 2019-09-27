@@ -43,10 +43,10 @@ class Token:
         self.columna = columna
 
     def token_string(self):
-        if self.lexema != "":
+        if self.tipo != "":
             res_string = "<{},{},{},{}>".format(self.tipo, self.lexema, self.fila, self.columna)
         else:   
-            res_string = "<{},{},{}>".format(self.tipo, self.fila, self.columna)
+            res_string = "<{},{},{}>".format(self.lexema, self.fila, self.columna)
         return res_string
 
 #\d - digitos, \w - alfanumerico, [a-zA-Z] - letras 
@@ -182,7 +182,7 @@ def main():
                 while i < len(linea):  
                     lexema += linea[i]
                     estado = dt(estado, linea[i])
-                    columna = (i + 2) - len(lexema) 
+                    columna = (i + 2) - len(lexema)
 
                     if estado in estados_aceptacion:
                         i -= estados_aceptacion[estado][1]
@@ -196,10 +196,12 @@ def main():
                             lexema = ""
 
                         if estado == 3:
-                            clasificar_identificador()
+                            if clasificar_identificador(lexema):
+                                appendToken("", lexema, fila, columna)
+                            else:
+                                appendToken(estados_aceptacion[estado][0], lexema, fila, columna)
                         else:
-                            token = Token(estados_aceptacion[estado][0], lexema, fila, columna)
-                            tokens_list.append(token.token_string())
+                            appendToken(estados_aceptacion[estado][0], lexema, fila, columna)
                             
                         estado = 1
                         lexema = ""
@@ -215,8 +217,19 @@ def main():
     for i in range(len(tokens_list)):
         print(tokens_list[i])
 
-# def identificar_token(estado):
-#     if estado == 3
+def appendToken(token,lexema,fila,columna):
+    token = Token(token, lexema, fila, columna)
+    tokens_list.append(token.token_string())
+
+def clasificar_identificador(lexema):
+    with open('reservadas.txt') as archivo:
+        reservadas = archivo.readlines()
+
+    for line in reservadas:
+        if lexema in line:
+            return True
+        else:
+            return False
 
 main()
 
