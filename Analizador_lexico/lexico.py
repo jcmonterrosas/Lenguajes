@@ -35,6 +35,7 @@ estados_aceptacion = {
 }
 
 tiene_lexema = [3, 5, 7, 9, 43]
+
 class Token:
     def __init__(self, tipo, lexema, fila, columna):
         self.tipo = tipo
@@ -51,6 +52,7 @@ class Token:
 
 #\d - digitos, \w - alfanumerico, [a-zA-Z] - letras 
 def dt(estado, caracter):
+    #print(estado, caracter)
     if estado == 1:
         if re.match("[a-zA-Z]", caracter):
             return 2
@@ -170,30 +172,35 @@ def main():
     filepath = 'ejemplo.txt'
     fila = 0
 
-    with open(filepath) as archivo:        
+    with open(filepath) as archivo:   
         for linea in archivo:
             estado = 1
             lexema = ""
             i = 0
             fila += 1
-            linea += " "
-
-            if linea[0] != '#':
-                while i < len(linea):  
+            #linea += " "
+            
+            while i < len(linea): 
+                if linea[i] != '#': 
                     lexema += linea[i]
                     estado = dt(estado, linea[i])
-                    columna = (i + 2) - len(lexema)
+                    columna = (i + 1) - len(lexema)
 
                     if estado in estados_aceptacion:
-                        i -= estados_aceptacion[estado][1]
-                        columna += (len(lexema) - len(lexema.replace(" ", "")))
-
+                        i -= estados_aceptacion[estado][1] 
                         if estado in tiene_lexema:
                             if estado != 43:
-                                lexema = lexema.replace(" ", "")
                                 lexema = lexema[:-estados_aceptacion[estado][1]]
+                                #lexema = lexema.strip()
                         else:
                             lexema = ""
+
+                        if linea[i] == ":" or linea[i] == "=":
+                            columna += 2 + (len(lexema) - len(lexema.strip()))
+                        else:
+                            columna += (len(lexema) - len(lexema.strip())) + 1
+
+                        lexema = lexema.strip()
 
                         if estado == 3:
                             if clasificar_identificador(lexema):
@@ -206,13 +213,15 @@ def main():
                         estado = 1
                         lexema = ""
                     if estado == -1:
+                        #print(estado)
                         tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
                         break
-                    
                     i += 1
+                else: 
+                    break
 
-    if estado != 1:
-        tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
+            if estado != 1:
+                tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
 
     for i in range(len(tokens_list)):
         print(tokens_list[i])
@@ -223,13 +232,11 @@ def appendToken(token,lexema,fila,columna):
 
 def clasificar_identificador(lexema):
     with open('reservadas.txt') as archivo:
-        reservadas = archivo.readlines()
-
-    for line in reservadas:
-        if lexema in line:
-            return True
-        else:
-            return False
+        flag = False
+        for line in archivo:
+            if lexema in line:
+                flag = True
+        return flag
 
 main()
 
