@@ -45,10 +45,10 @@ class Token:
         self.columna = columna
 
     def token_string(self):
-        if self.tipo != "":
+        if self.lexema != "":
             res_string = "<{},{},{},{}>".format(self.tipo, self.lexema, self.fila, self.columna)
         else:   
-            res_string = "<{},{},{}>".format(self.lexema, self.fila, self.columna)
+            res_string = "<{},{},{}>".format(self.tipo, self.fila, self.columna)
         return res_string
         
 
