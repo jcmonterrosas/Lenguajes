@@ -31,7 +31,8 @@ estados_aceptacion = {
     38: ["tk_mayor",1],
     40 : ["tk_comparacion", 0],
     41 : ["tk_igual", 1],
-    43 : ["tk_cadena", 0]
+    43 : ["tk_cadena", 0],
+    47 : ["tk_diferente", 0]
 }
 
 tiene_lexema = [3, 5, 7, 9, 43]
@@ -49,6 +50,7 @@ class Token:
         else:   
             res_string = "<{},{},{}>".format(self.lexema, self.fila, self.columna)
         return res_string
+        
 
 #\d - digitos, \w - alfanumerico, [a-zA-Z] - letras 
 def dt(estado, caracter):
@@ -97,7 +99,11 @@ def dt(estado, caracter):
         elif caracter == '=':
             return 39
         elif caracter == '"':
-            return 42            
+            return 42   
+        elif caracter == '#':
+            return 44    
+        elif caracter == '!':
+            return 46           
         else:
             return -1
     elif estado == 2:
@@ -164,6 +170,16 @@ def dt(estado, caracter):
             return 43
         else:
             return 42
+    elif estado == 44:
+        if caracter == '\n':
+            return 45
+        else:
+            return 44
+    elif estado == 46:
+        if caracter == '=':
+            return 47
+        else:
+            return -1
     else:
         return -1
 
@@ -178,47 +194,40 @@ def main():
             lexema = ""
             i = 0
             fila += 1
-            #linea += " "
-            
-            while i < len(linea): 
-                if linea[i] != '#': 
-                    lexema += linea[i]
-                    estado = dt(estado, linea[i])
-                    columna = (i + 1) - len(lexema)
+            linea += "\n"
 
-                    if estado in estados_aceptacion:
-                        i -= estados_aceptacion[estado][1] 
-                        if estado in tiene_lexema:
-                            if estado != 43:
-                                lexema = lexema[:-estados_aceptacion[estado][1]]
-                                #lexema = lexema.strip()
-                        else:
-                            lexema = ""
+            while i < len(linea):  
+                if estado == 1: columna = i + 1
+                lexema += linea[i]
+                estado = dt(estado, linea[i])
 
-                        if linea[i] == ":" or linea[i] == "=":
-                            columna += 2 + (len(lexema) - len(lexema.strip()))
-                        else:
-                            columna += (len(lexema) - len(lexema.strip())) + 1
+                if estado == 45: estado = 1
 
-                        lexema = lexema.strip()
+                if estado in estados_aceptacion:
+                    i -= estados_aceptacion[estado][1]
 
-                        if estado == 3:
-                            if clasificar_identificador(lexema):
-                                appendToken("", lexema, fila, columna)
-                            else:
-                                appendToken(estados_aceptacion[estado][0], lexema, fila, columna)
+                    if estado in tiene_lexema:
+                        if estado != 43:
+                            lexema = lexema[:-estados_aceptacion[estado][1]]
+                            lexema = lexema.replace(" ", "")
+                    else:
+                        lexema = ""
+
+                    if estado == 3:
+                        if clasificar_identificador(lexema):
+                            appendToken(lexema, "", fila, columna)
                         else:
                             appendToken(estados_aceptacion[estado][0], lexema, fila, columna)
-                            
-                        estado = 1
-                        lexema = ""
-                    if estado == -1:
-                        #print(estado)
-                        tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
-                        break
-                    i += 1
-                else: 
+                    else:
+                        appendToken(estados_aceptacion[estado][0], lexema, fila, columna)
+                        
+                    estado = 1
+                    lexema = ""
+                if estado == -1:
+                    tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
                     break
+                
+                i += 1
 
             if estado != 1:
                 tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))

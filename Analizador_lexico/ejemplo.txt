@@ -6,6 +6,10 @@ resource factorial()
       [] k > 1 -> f := k * fact(k-1)
       fi
    end fact
+<<<<<<< HEAD
+=======
+
+>>>>>>> hotfix
    var n: int
    writes("Cuántos factoriales hay? "); read(n)
    write()
@@ -13,3 +17,9 @@ resource factorial()
       write(i, "el factorial es ", fact(i))
    af
 end factorial
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> hotfix
