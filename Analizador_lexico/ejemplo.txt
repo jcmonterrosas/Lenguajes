@@ -1,13 +1,15 @@
-global sizes 
-   # matrix dimension, default 10
-   var N := 10 
-   # number of processes, default 2
-   var PR := 2 
-   # strip size
-   var S : int 
-body sizes 
-   getarg(1, N); getarg(2, PR); S := N/PR 
-   if N mod PR != 0 -> 
-     write("N must be a multiple of PR"); stop (1) 
-   fi 
-end
+resource factorial()
+   # Esto es un comentario
+   procedure fact(k: int) returns f: int
+      if k < 0 -> f := -1
+      [] k = 0 or k = 1 -> f := 1
+      [] k > 1 -> f := k * fact(k-1)
+      fi
+   end fact
+   var n: int
+   writes("Cuántos factoriales hay? "); read(n)
+   write()
+   fa i := 1 to n ->
+      write(i, "el factorial es ", fact(i))
+   af
+end factorial

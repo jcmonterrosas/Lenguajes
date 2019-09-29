@@ -231,6 +231,8 @@ def appendToken(token,lexema,fila,columna):
     tokens_list.append(token.token_string())
 
 def clasificar_identificador(lexema):
+    if len(lexema) < 2:
+        return False
     with open('reservadas.txt') as archivo:
         flag = False
         for line in archivo:
