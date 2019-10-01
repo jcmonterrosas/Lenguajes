@@ -35,6 +35,8 @@ estados_aceptacion = {
     47 : ["tk_diferente", 0]
 }
 
+
+
 tiene_lexema = [3, 5, 7, 9, 43]
 
 class Token:
@@ -107,7 +109,7 @@ def dt(estado, caracter):
         else:
             return -1
     elif estado == 2:
-        if re.match("\w", caracter):
+        if re.match("\w", caracter) or caracter == '_':
             return 2
         else:
             return 3
@@ -188,17 +190,18 @@ def main():
     filepath = 'ejemplo.txt'
     fila = 0
 
-    with open(filepath) as archivo:   
+    with open(filepath,encoding="utf-8") as archivo:   
         for linea in archivo:
+            print(linea)
             estado = 1
             lexema = ""
             i = 0
             fila += 1
             linea += "\n"
-
             while i < len(linea):  
                 if estado == 1: columna = i + 1
                 lexema += linea[i]
+
                 estado = dt(estado, linea[i])
 
                 if estado == 45: estado = 1
