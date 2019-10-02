@@ -11,7 +11,7 @@ estados_aceptacion = {
     13 : ["tk_separa", 0],
     14 : ["tk_parentesis_cuad_izquierdo", 1],
     15 : ["tk_parentesis_cuad_derecho", 0],
-    17 : ["tk_asignacion", 0],
+    17 : ["tk_asignacion", 1],
     18 : ["tk_dos_puntos", 1],
     19 : ["tk_coma", 0],
     21 : ["tk_incremento", 0],
@@ -33,7 +33,8 @@ estados_aceptacion = {
     41 : ["tk_igual", 1],
     43 : ["tk_cadena", 0],
     47 : ["tk_diferente", 0],
-    48 : ["tk_menos",0]
+    48 : ["tk_menos",0],
+    50 : ["tk_swap",0]
 }
 
 
@@ -63,7 +64,7 @@ def dt(estado, caracter):
             return 2
         elif re.match("\d", caracter):
             return 4
-        elif caracter == "\n" or caracter == " ":
+        elif caracter == "\n" or caracter == " " or caracter == "\t":
             return 1
         elif  caracter == '(':
             return 10
@@ -138,7 +139,7 @@ def dt(estado, caracter):
             return 14
     elif estado == 16:
         if caracter == '=':
-            return 17
+            return 49
         else:
             return 18
     elif estado == 20:
@@ -183,12 +184,17 @@ def dt(estado, caracter):
             return 47
         else:
             return -1
+    elif estado == 49:
+        if caracter == ':':
+            return 50
+        else:
+            return 17
     else:
         return -1
 
     
 def main():
-    filepath = 'ejemplo.txt'
+    filepath = '4.txt'
     fila = 0
 
     with open(filepath,encoding="utf-8") as archivo:   
@@ -220,6 +226,7 @@ def main():
                         if estado != 43:
                             lexema = lexema[:-estados_aceptacion[estado][1]]
                             lexema = lexema.replace(" ", "")
+                            lexema = lexema.replace("\t", "")
                     else:
                         lexema = ""
 
@@ -239,7 +246,7 @@ def main():
                 
                 i += 1
 
-            if estado != 1:
+            if estado == 42:
                 tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
 
     for i in range(len(tokens_list)):

@@ -68,3 +68,5 @@ abort
 lft                   
 reply 
 process 
+char
+string
