@@ -1,14 +1,3 @@
-resource main()
-   import sizes, point1
-   var pc_ap[N,N]: cap point1
-   # create points
-   fa i := 1 to N, j := 1 to N ->
-     pcap[i,j] := create point1(i, j)
-   af
-   # give each point capabilities for its neighbors
-   fa i := 1 to N, j := 1 to N ->
-     send pcap[i,j].compute(pcap[i,1:N], pcap[1:N,j])
-     write("áéíóúñ+~")
-   af
-end
+(k -1)
+    
 

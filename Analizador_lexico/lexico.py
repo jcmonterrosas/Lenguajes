@@ -32,7 +32,8 @@ estados_aceptacion = {
     40 : ["tk_comparacion", 0],
     41 : ["tk_igual", 1],
     43 : ["tk_cadena", 0],
-    47 : ["tk_diferente", 0]
+    47 : ["tk_diferente", 0],
+    48 : ["tk_menos",0]
 }
 
 
@@ -192,7 +193,6 @@ def main():
 
     with open(filepath,encoding="utf-8") as archivo:   
         for linea in archivo:
-            print(linea)
             estado = 1
             lexema = ""
             i = 0
@@ -204,11 +204,18 @@ def main():
 
                 estado = dt(estado, linea[i])
 
+                if estado == 23 and i>0 and i<len(linea):
+                    if re.match("\w", linea[i-1]): 
+                        if linea[i+1] !='>':
+                            estado = 48 
+                        else:
+                            estado = 23    
+                        
+
                 if estado == 45: estado = 1
 
                 if estado in estados_aceptacion:
                     i -= estados_aceptacion[estado][1]
-
                     if estado in tiene_lexema:
                         if estado != 43:
                             lexema = lexema[:-estados_aceptacion[estado][1]]
