@@ -101,10 +101,13 @@ def calcular_siguientes(NoTerminal):
                 for x in range(0,rango):                  
                     if(gramatica.get(NT)[rule][x] == NoTerminal):                               
                         if(x == rango-1):
-                            siguientes_B = calcular_siguientes(NT)
-                            aux = siguientes.get(NoTerminal)
-                            aux = aux.union(siguientes_B)
-                            siguientes.update({NoTerminal:aux})
+                            if(NT == NoTerminal):
+                                return siguientes.get(NoTerminal)
+                            else:
+                                siguientes_B = calcular_siguientes(NT)
+                                aux = siguientes.get(NoTerminal)
+                                aux = aux.union(siguientes_B)
+                                siguientes.update({NoTerminal:aux})
                         else:       
                             if(isNotTerminal(gramatica.get(NT)[rule][x+1])):
                                 primeros_beta = primeros.get(gramatica.get(NT)[rule][x+1])
@@ -162,9 +165,9 @@ for w in gramatica.keys():
 calcular_predicciones()
 print("Primeros")
 print(primeros)
-print("Primeros")
+print("Siguientes")
 print(siguientes)
-print("Primeros")
+print("Predicciones")
 print(predicciones)
 
 
