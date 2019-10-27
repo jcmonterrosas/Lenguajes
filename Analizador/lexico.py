@@ -18,7 +18,6 @@ estados_aceptacion = {
     22 : ["tk_mas", 1],
     24 : ["tk_ejecuta", 0],
     25 : ["tk_menos", 1],
-    26 : ["tk_multiplicacion", 0],
     27 : ["tk_division", 0],
     28 : ["tk_modulo", 0],
     29 : ["tk_punto_coma", 0],
@@ -27,14 +26,16 @@ estados_aceptacion = {
     32 : ["tk_corchete_derecho", 0],
     34 : ["tk_menor_igual", 0],
     35 : ["tk_menor", 1],
-    37: ["tk_mayor_igual",0],
-    38: ["tk_mayor",1],
+    37 : ["tk_mayor_igual",0],
+    38 : ["tk_mayor",1],
     40 : ["tk_comparacion", 0],
     41 : ["tk_igual", 1],
     43 : ["tk_cadena", 0],
     47 : ["tk_diferente", 0],
     48 : ["tk_menos",0],
-    50 : ["tk_swap",0]
+    50 : ["tk_swap",0],
+    51 : ["tk_exponente", 0],
+    52 : ["tk_multiplicacion", 1],
 }
 
 
@@ -154,6 +155,11 @@ def dt(estado, caracter):
             return 4
         else:
             return 25
+    elif estado == 26:
+        if caracter == "*":
+            return 51
+        else:
+            return 52
     elif estado == 33:
         if caracter == '=':
             return 34
@@ -194,7 +200,7 @@ def dt(estado, caracter):
 
     
 def main():
-    filepath = '4.txt'
+    filepath = 'ejemplo.txt'
     fila = 0
 
     with open(filepath,encoding="utf-8") as archivo:   
@@ -249,12 +255,13 @@ def main():
             if estado == 42:
                 tokens_list.append("Error lexico(linea:{},posicion:{})".format(fila,columna))
 
-    for i in range(len(tokens_list)):
-        print(tokens_list[i])
+    # for i in range(len(tokens_list)):
+    #     print(tokens_list[i])
 
 def appendToken(token,lexema,fila,columna):
     token = Token(token, lexema, fila, columna)
-    tokens_list.append(token.token_string())
+    #tokens_list.append(token.token_string())
+    tokens_list.append(token)
 
 def clasificar_identificador(lexema):
     if len(lexema) < 2:
@@ -266,6 +273,6 @@ def clasificar_identificador(lexema):
                 flag = True
         return flag
 
-main()
+#main()
 
     
