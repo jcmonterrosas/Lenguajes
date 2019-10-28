@@ -36,6 +36,18 @@ estados_aceptacion = {
     50 : ["tk_swap",0],
     51 : ["tk_exponente", 0],
     52 : ["tk_multiplicacion", 1],
+    53 : ["tk_no",0],
+    54 : ["tk_arroba",0],
+    55 : ["tk_interrogacion",0],
+    56 : ["tk_decremento",1],
+    58 : ["tk_concatenacion",0],
+    59 : ["tk_o",1],
+    60 : ["tk_y",0],
+    61 : ["tk_diferente",0],
+    63 : ["tk_desplazar_izq",0],
+    64 : ["tk_desplazar_der",0],
+    65 : ["tk_elevado",0],
+
 }
 
 
@@ -108,7 +120,19 @@ def dt(estado, caracter):
         elif caracter == '#':
             return 44    
         elif caracter == '!':
-            return 46           
+            return 46  
+        elif caracter == '~':
+            return 62     
+        elif caracter == '@':
+            return 54 
+        elif caracter == '?':
+            return 55
+        elif caracter == '|':
+            return 57   
+        elif caracter == '&':
+            return 60 
+        elif caracter == "^":
+            return 65    
         else:
             return -1
     elif estado == 2:
@@ -151,6 +175,8 @@ def dt(estado, caracter):
     elif estado == 23:
         if caracter == '>':
             return 24
+        elif caracter == '-':
+            return 56
         elif re.match("\d", caracter):
             return 4
         else:
@@ -163,11 +189,15 @@ def dt(estado, caracter):
     elif estado == 33:
         if caracter == '=':
             return 34
+        elif caracter == "<":
+            return 63    
         else:
             return 35
     elif estado == 36:
         if caracter == '=':
             return 37
+        elif caracter == '>':
+            return 64   
         else:
             return 38
     elif estado == 39:
@@ -195,6 +225,16 @@ def dt(estado, caracter):
             return 50
         else:
             return 17
+    elif estado == 57:
+        if caracter == "|":
+            return 58
+        else:
+            return 59   
+    elif estado == 62:
+        if caracter == "=":
+            return 61
+        else:
+            return 53        
     else:
         return -1
 
@@ -238,6 +278,7 @@ def main():
 
                     if estado == 3:
                         if clasificar_identificador(lexema):
+                            lexema = "tk_" + lexema
                             appendToken(lexema, "", fila, columna)
                         else:
                             appendToken(estados_aceptacion[estado][0], lexema, fila, columna)

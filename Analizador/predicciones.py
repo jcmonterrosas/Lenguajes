@@ -1,11 +1,10 @@
 import re
+import gramatica
 
 primeros = {} 
 siguientes = {}  
 predicciones = {}
 epsilon = {"e"}
-
-
 
 def inicializar_primeros():
     for key in gramatica.keys():
@@ -14,7 +13,6 @@ def inicializar_primeros():
             content.append(set())
         primeros.update({key:content})
        
-
 def inicializar_siguientes():
     for key in gramatica.keys():
         siguientes.update({key:set()})
@@ -26,30 +24,7 @@ def inicializar_predicciones():
             content.append(set())
         predicciones.update({key:content})
 
-""" gramatica ={
-    "A" :[["B","C"],["ant", "A", "all"]],
-    "B" :[["big","C"],["bus", "A", "boss"],["e"]],
-    "C" :[["cat"],["cow"]],
-} """
-
-gramatica = {
-    "Exp_m1" : [["Exp_m2","Exp_m1_prima"]],
-    "Exp_m1_prima" : [["tk_mas", "Exp_m2", "Exp_m1_prima"],["e"]],
-    "Exp_m2" : [["Exp_m3","Exp_m2_prima"]],
-    "Exp_m2_prima" : [["tk_menos", "Exp_m3", "Exp_m2_prima"],["e"]],
-    "Exp_m3" : [["Exp_m4","Exp_m3_prima"]],
-    "Exp_m3_prima" : [["tk_exponente", "Exp_m4", "Exp_m3_prima"],["e"]],
-    "Exp_m4" : [["Exp_m5","Exp_m4_prima"]],
-    "Exp_m4_prima" : [["tk_multiplicacion", "Exp_m5", "Exp_m4_prima"],["e"]],
-    "Exp_m5" : [["Exp_m6","Exp_m5_prima"]],
-    "Exp_m5_prima" : [["tk_division", "Exp_m6", "Exp_m5_prima"],["e"]],
-    "Exp_m6" : [["Exp_m7","Exp_m6_prima"]],
-    "Exp_m6_prima" : [["tk_modulo", "Exp_m7", "Exp_m6_prima"],["e"]],
-    "Exp_m7" : [["Exp_m8","Exp_m7_prima"]],
-    "Exp_m7_prima" : [["mod", "Exp_m8", "Exp_m7_prima"],["e"]],
-    "Exp_m8" : [["tk_id"],["tk_numero"]]
-} 
-
+gramatica = gramatica.gramatica
 
 def calcular_primeros(inicial):
     contador = 0
@@ -89,10 +64,13 @@ def calcular_primeros(inicial):
         contador = contador +1
     return primeros.get(inicial)
 
+anterior = set("excepcionInicial")
+
 def calcular_siguientes(NoTerminal):
+    global anterior
     if(NoTerminal == simbolo_inicial):
         aux = siguientes.get(NoTerminal)
-        aux.add("$")
+        aux.add("EOF")
         siguientes.update({NoTerminal:aux})
     for NT in gramatica.keys():
         for rule in range(0, len(gramatica.get(NT))):
@@ -100,16 +78,25 @@ def calcular_siguientes(NoTerminal):
                 rango = len(gramatica.get(NT)[rule])
                 for x in range(0,rango):                  
                     if(gramatica.get(NT)[rule][x] == NoTerminal):                               
-                        if(x == rango-1):
-                            if(NT == NoTerminal):
+                        if(x == rango-1): # Beta = e
+                            if(NT == NoTerminal): # si A y B son iguales
                                 return siguientes.get(NoTerminal)
-                            else:
-                                siguientes_B = calcular_siguientes(NT)
+                            else: # si A y B son distintos
+                                #aca esta el bug
+                                if(NoTerminal == "subscripts"):
+                                    siguientes_B = siguientes.get("subscripts_opt")
+                                else:
+                                    if(anterior == siguientes.get(NT)):
+                                        return siguientes.get(NoTerminal)
+                                    else:
+                                        
+                                        anterior = siguientes.get(NT)
+                                        siguientes_B = calcular_siguientes(NT) # NT -> alfa NoTerminal beta
                                 aux = siguientes.get(NoTerminal)
                                 aux = aux.union(siguientes_B)
                                 siguientes.update({NoTerminal:aux})
-                        else:       
-                            if(isNotTerminal(gramatica.get(NT)[rule][x+1])):
+                        else:   # Beta != e 
+                            if(isNotTerminal(gramatica.get(NT)[rule][x+1])): # Si Beta es un no terminal
                                 primeros_beta = primeros.get(gramatica.get(NT)[rule][x+1])
                                 total = siguientes.get(NoTerminal)
                                 for w in primeros_beta:
@@ -117,11 +104,12 @@ def calcular_siguientes(NoTerminal):
                                 siguientes.update({NoTerminal:total})
                                 for q in primeros_beta:
                                     if("e" in q):
+                                        
                                         siguientes_B = calcular_siguientes(NT)
                                         aux = siguientes.get(NoTerminal)
                                         aux = aux.union(siguientes_B)
                                         siguientes.update({NoTerminal:aux})
-                            elif(not isNotTerminal(gramatica.get(NT)[rule][x+1])):
+                            elif(not isNotTerminal(gramatica.get(NT)[rule][x+1])): # Si Beta es un terminal
                                 aux = siguientes.get(NoTerminal)
                                 aux.add(gramatica.get(NT)[rule][x+1])
                                 siguientes.update({NoTerminal:aux})
@@ -130,7 +118,7 @@ def calcular_siguientes(NoTerminal):
 def calcular_predicciones():
     for NT in gramatica.keys():
         for numregla in range(0,len(gramatica.get(NT))):
-            print(numregla)
+            
             if("e" in gramatica.get(NT)[numregla]):
                 aux_primeros = primeros.get(NT)[numregla].difference(epsilon)
                 aux_siguientes = siguientes.get(NT)
@@ -143,32 +131,33 @@ def calcular_predicciones():
                 aux_predicciones[numregla] = aux_predicciones[numregla].union(aux_primeros)
                 predicciones.update({NT:aux_predicciones})
 
-    
-def isNotTerminal(symbol):
+""" def isNotTerminal(symbol):
     if "Exp" in symbol:
         return True
     else:
-        return False
+        return False """
         
+def isNotTerminal(symbol):
+    if(symbol[0]=='t' and symbol[1]=='k'):
+        return False
+    else:
+        return True
    
 """ def isNotTerminal(symbol):
      return re.match("[A-Z]",symbol[0]) """ 
     
-simbolo_inicial = "Exp_m1"
-inicializar_primeros()
-inicializar_siguientes()
-inicializar_predicciones()
-for u in gramatica.keys():
-    calcular_primeros(u) 
-for w in gramatica.keys():
-    calcular_siguientes(u) 
-calcular_predicciones()
-print("Primeros")
-print(primeros)
-print("Siguientes")
-print(siguientes)
-print("Predicciones")
-print(predicciones)
+simbolo_inicial = "expr"
+def main():
+    inicializar_primeros()
+    inicializar_siguientes()
+    inicializar_predicciones()
+    for u in gramatica.keys():
+        calcular_primeros(u) 
+    for w in gramatica.keys():
+        calcular_siguientes(w) 
+    calcular_predicciones()
+    print("Predicciones")
+    print(predicciones)
 
 
 

@@ -70,3 +70,14 @@ reply
 process 
 char
 string
+false
+low
+high
+new
+enum
+ptr
+any
+rec
+union
+vm
+xor
