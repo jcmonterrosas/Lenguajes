@@ -15,7 +15,8 @@ fa
 af
 initial
 const 
-returns          
+returns  
+return        
 to             
 final 
 op  
@@ -27,6 +28,7 @@ oc
 cap  
 send  
 destroy  
+begin
 end      
 receive          
 create
@@ -81,3 +83,10 @@ rec
 union
 vm
 xor
+skip
+forward
+V
+P
+downto
+suchthat
+external

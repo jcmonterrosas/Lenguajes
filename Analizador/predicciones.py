@@ -2,7 +2,8 @@ import re
 import gramatica
 
 primeros = {} 
-siguientes = {}  
+siguientes = {} 
+siguientes_aux = {} 
 predicciones = {}
 epsilon = {"e"}
 
@@ -16,6 +17,7 @@ def inicializar_primeros():
 def inicializar_siguientes():
     for key in gramatica.keys():
         siguientes.update({key:set()})
+        siguientes_aux.update({key:set("aux")})
 
 def inicializar_predicciones():
     for key in gramatica.keys():
@@ -54,12 +56,13 @@ def calcular_primeros(inicial):
                             primeros.update({inicial:aux})
                         else:
                             for k in range(1, len(regla)):
-                                primerosk= calcular_primeros(regla[k])
-                                aux = primeros.get(inicial)
-                                for l in primerosk:
-                                    temporal =aux[contador].union(l)
-                                    aux[contador] = temporal
-                                primeros.update({inicial:aux})
+                                if(isNotTerminal(regla[k])):
+                                    primerosk= calcular_primeros(regla[k])
+                                    aux = primeros.get(inicial)
+                                    for l in primerosk:
+                                        temporal =aux[contador].union(l)
+                                        aux[contador] = temporal
+                                    primeros.update({inicial:aux})
 
         contador = contador +1
     return primeros.get(inicial)
@@ -91,6 +94,9 @@ def calcular_siguientes(NoTerminal):
                                     else:
                                         
                                         anterior = siguientes.get(NT)
+                                        print(NoTerminal)
+                                        print(anterior)
+                                        
                                         siguientes_B = calcular_siguientes(NT) # NT -> alfa NoTerminal beta
                                 aux = siguientes.get(NoTerminal)
                                 aux = aux.union(siguientes_B)
@@ -104,7 +110,6 @@ def calcular_siguientes(NoTerminal):
                                 siguientes.update({NoTerminal:total})
                                 for q in primeros_beta:
                                     if("e" in q):
-                                        
                                         siguientes_B = calcular_siguientes(NT)
                                         aux = siguientes.get(NoTerminal)
                                         aux = aux.union(siguientes_B)
@@ -145,8 +150,8 @@ def isNotTerminal(symbol):
    
 """ def isNotTerminal(symbol):
      return re.match("[A-Z]",symbol[0]) """ 
-    
-simbolo_inicial = "expr"
+
+simbolo_inicial = "component"
 def main():
     inicializar_primeros()
     inicializar_siguientes()
@@ -156,9 +161,14 @@ def main():
     for w in gramatica.keys():
         calcular_siguientes(w) 
     calcular_predicciones()
+    # print("primeros")
+    # print(primeros)
+    # print("siguientes")
+    # print(siguientes)
     print("Predicciones")
     print(predicciones)
 
+main()
 
 
 
