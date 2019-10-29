@@ -4,7 +4,6 @@ gramatica = {
         [
             ["comp_kwd", "tk_id", "component_p"], ##Se podria reducir mas cambiando comp_kwd por sus producciones
             ["tk_body", "tk_id", "body_stmt_ls", "end_id", "tk_punto_coma"],
-            ["e"]
         ],
     
     "component_p" :
@@ -41,11 +40,6 @@ gramatica = {
         [
             ["parameters"]
         ],
-    
-    "separate_body" :
-        [
-            ["tk_body", "tk_id", "body_stmt_ls", "end_id"]
-        ],
 
     ############################### spec/body contents ###############################
     "spec_stmt_ls": ## quite recursividad por izquierda REVISAR
@@ -53,11 +47,13 @@ gramatica = {
             ["spec_stmt","spec_stmt_ls_p"],
            
         ],
+        
     "spec_stmt_ls_p":
         [
             ["tk_punto_coma","spec_stmt","spec_stmt_ls_p"],
             ["e"]
         ],
+        
     "spec_stmt":
         [
             ["common_stmt"],
@@ -75,6 +71,14 @@ gramatica = {
             ["tk_punto_coma","body_stmt","body_stmt_ls_p"],
             ["e"]
         ],
+
+    "body_stmt":
+        [
+            ["common_stmt"],
+            ["expr"],
+            ["body_only"],
+            ["extend_clause"],
+        ],
     
     "body_only":
         [
@@ -85,36 +89,33 @@ gramatica = {
             ["initial_block"],
             ["final_block"],
         ],
+        
     "common_stmt":
         [
-            ["e"],
             ["decl"],
             ["import_clause"],
+            ["e"],
         ],
 
     "import_clause":
         [
-            ["tk_import"],
+            ["tk_import", "import_list"],
         ],
 
     "extend_clause": ## REVISAR EN GRAMATICA (IF)
         [
-            ["tk_extend"],
+            ["tk_extend", "import_list"],
         ],
 
     "import_list": ## quite recursividad por izquierda REVISAR
         [
-            ["import_name","import_list_p"],
+            ["tk_id", "import_list_p"],
         ],
 
     "import_list_p":
         [
-            ["tk_coma","import_name","import_list_p"],
+            ["tk_coma", "tk_id", "import_list_p"],
             ["e"]
-        ],
-    "import_name":
-        [
-            ["tk_id"],
         ],
     
     ############################### top-level body stmtents ###############################
@@ -123,9 +124,15 @@ gramatica = {
             ["op_or_ext","oper_def_lp"]
         ],
 
+    "op_or_ext":
+        [
+            ["tk_op"],
+            ["tk_external"],
+        ],
+
     "oper_def_lp": ## quite recursividad por izquierda REVISAR
         [
-            ["oper_def","oper_def_lp_p"],
+            ["oper_def", "oper_def_lp_p"],
         ],
     
     "oper_def_lp_p":
@@ -147,9 +154,10 @@ gramatica = {
 
     "colon_opt":
         [
-            ["e"],
-            ["tk_dos_puntos"]
+            ["tk_dos_puntos"],
+            ["e"]
         ],
+
     "sem_decl":
         [
             ["tk_sem","sem_def_lp"],
@@ -162,7 +170,8 @@ gramatica = {
 
     "sem_def_lp_p":
         [
-           ["tk_coma","sem_def","sem_def_lp_p"] 
+           ["tk_coma","sem_def","sem_def_lp_p"],
+           ["e"],
         ],
     
     "sem_def":
@@ -177,55 +186,48 @@ gramatica = {
     
     "sem_init":
         [
-            ["e"],
             ["tk_asignacion","expr"],
+            ["e"]
         ],
 
     "proc":
         [
-            ["tk_proc","tk_id", "param_names"],
-            ["block"],
-            ["end_id"]
+            ["tk_proc", "tk_id", "param_names", "block", "end_id"],
         ],
 
     "procedure":
         [
-            ["tk_procedure","tk_id","prototype"],
-            ["block"],
-            ["end_id"]
+            ["tk_procedure","tk_id","prototype","block","end_id"],
+
         ],
 
     "process":
         [
-            ["tk_process","tk_id","return_spec_null","quantifiers_opt"],
-            ["block"],
-            ["end_id"]
+            ["tk_process","tk_id","return_spec_null","quantifiers_opt","block","end_id"],
         ],
 
     "initial_block":
         [
-            ["tk_initial"],
-            ["block"],
-            ["tk_end","initial_opt"]
+            ["tk_initial","block","tk_end","initial_opt"],
+
         ],
 
     "initial_opt":
         [
-            ["e"],
-            ["tk_initial"]
+            ["tk_initial"],
+            ["e"]
         ],
 
     "final_block":
         [
-            ["tk_final"],
-            ["block"],
-            ["tk_end","final_opt"]
+            ["tk_final","block","tk_end","final_opt"],
+
         ],
     
     "final_opt":
         [
-            ["e"],
-            ["tk_final"]
+            ["tk_final"],
+            ["e"]
         ],
 
     ############################### parameters ###############################
@@ -311,27 +313,27 @@ gramatica = {
             ["e"]
         ],
 
-    ############################### declaration ###############################
+    ############################### declaration ###############################  ---Revisar (Revisado)
     "decl":
         [
-            ["error", "tk_punto_coma"], ## error nunca se define 
+            ["tk_punto_coma"], 
             ["type_decl"],
             ["obj_decl"],
             ["optype_decl"],
             ["sem_decl"],
-            ["op_dec"],
+            ["op_decl"],
 
         ],
 
     "type_decl":
         [
-            ["tk_type","tk_id","tk_igual","type","type_restriction"]
+            ["tk_type", "tk_id", "tk_igual", "type_gram", "type_restriction"]
         ],
     
     "type_restriction":
         [
+            ["tk_corchete_izquierdo","tk_id","tk_corchete_derecho"],
             ["e"],
-            ["tk_corchete_izquierdo","tk_id","tk_corchete_derecho"]
         ],
     
     "obj_decl":
@@ -341,7 +343,8 @@ gramatica = {
 
     "var_or_const":
         [
-            ["tk_var","tk_const"]
+            ["tk_var"],
+            ["tk_const"]
         ],
 
     "var_def_lp":
@@ -360,7 +363,7 @@ gramatica = {
             ["id_subs_lp", "var_att"]
         ],
 
-    "var_att":  ##¡¡¡REVISAR!!!  tenia factores comunes por la izquierda
+    "var_att":  ##¡¡¡REVISAR!!!  
         [
             ["tk_dos_puntos","type_gram","var_att_p"],
             ["tk_asignacion", "expr"],
@@ -369,12 +372,12 @@ gramatica = {
 
     "var_att_p": 
         [
-            ["e"],
             ["tk_asignacion", "expr"],
+            ["e"],
         ],
 
 
-    ############################### type specification ###############################
+    ############################### type specification ############################### -- Revisar
     "type_gram" :
         [
             ["subscripts", "unsub_type"],
@@ -475,26 +478,287 @@ gramatica = {
     "cap_for" : 
         [
             ["qualified_id"],
-            #["op_prototype"],
+            ["op_prototype"],
             ["tk_sem", "sem_proto"],
             ["tk_vm"]
         ],
 
-    ############################### optype ###############################
+    ############################### optype ###############################  (Revisado)
 
-    ############################### blocks and statements ###############################
+    "optype_decl":
+        [
+            ["tk_optype","tk_id","eq_opt","op_prototype"],
+        ],
 
+    "op_prototype":
+        [
+            ["prototype","op_restriction_opt"]
+        ],
+
+    "eq_opt":
+        [
+            ["tk_igual"],
+            ["e"],
+        ],
+    
+    "op_restriction_opt":
+        [
+            ["tk_corchete_izquierdo","op_restriction","tk_corchete_derecho"],
+            ["e"],
+        ],
+
+    "op_restriction": #quitar factor comun por izquierda
+        [
+            ["tk_call", "op_restriction_p"],
+            ["tk_send", "op_restriction_p_p"],
+
+        ],
+
+    "op_restriction_p":
+        [
+            ["tk_coma", "tk_send"],
+            ["e"],
+        ],
+
+    "op_restriction_p_p":
+        [
+            ["tk_coma", "tk_call"],
+            ["e"],
+        ],
+
+    ############################### blocks and statements ############################### (Revisado)
+
+    "block":
+        [
+            ["block_items"]
+        ],
+
+    "block_items": # Recursion por izquierda
+        [
+            ["block_item","block_items_p"],
+        ],
+
+    "block_items_p":
+        [
+            ["tk_punto_coma","block_item","block_items_p"],
+            ["e"]
+        ],
+
+    "block_item":
+        [
+            ["decl"],
+            ["stmt"],
+            ["expr"],
+            ["import_clause"],
+            ["e"],
+        ],
+    
+    "stmt":
+        [
+            ["tk_skip"],
+            ["stop_stmt"],
+            ["tk_exit"],
+            ["tk_next"],
+            ["tk_return"],
+            ["tk_reply"],
+            ["tk_forward", "invocation"],
+            ["send_stmt"],
+            ["explicit_call"],
+            ["tk_destroy", "expr"],
+            ["tk_begin", "block", "tk_end"],
+            ["tk_if", "guarded_cmd_lp", "else_cmd_opt", "tk_fi"],
+            ["tk_do", "guarded_cmd_lp", "else_cmd_opt", "tk_od"],
+            ["tk_fa", "quantifier_lp", "tk_ejecuta", "block", "tk_af"],
+            ["tk_V", "tk_parentesis_izquierdo", "expr", "tk_parentesis_derecho"],
+            ["input_stmt"],
+            ["tk_receive", "expr", "paren_list"],
+            ["tk_P", "tk_parentesis_izquierdo", "expr", "tk_parentesis_derecho"],
+            ["concurrent_stmt"],
+        ],
+
+    "stop_stmt":
+        [
+            ["tk_stop","exit_code_opt"]
+        ],
+
+    "exit_code_opt":
+        [ 
+            ["tk_parentesis_izquierdo","expr","tk_parentesis_derecho"],
+            ["e"],
+        ],
+        
+    "send_stmt":
+        [
+            ["tk_send","invocation"],
+        ],
+
+    "explicit_call":
+        [
+            ["tk_call","invocation"]
+        ],
+        
+    "guarded_cmd_lp": #Recursion izquierda
+        [
+            ["guarded_cmd","guarded_cmd_lp_p"],
+        ],
+    
+    "guarded_cmd_lp_p": 
+        [
+            ["tk_separa","guarded_cmd","guarded_cmd_lp_p"],
+            ["e"]
+        ],
+
+    "guarded_cmd":
+        [
+            ["expr","tk_ejecuta","block"],
+        ],
+    
+    "else_cmd_opt":
+        [
+            ["tk_separa","tk_else","tk_ejecuta","block"],
+            ["e"]
+        ],
+    
+    
     ############################### input statement ###############################
+    "input_stmt":
+        [
+            ["tk_in","in_cmd_lp","else_cmd_opt","tk_ni"] 
+        ],
+        
+    "in_cmd_lp": #recursividad por izquierda
+        [
+            ["in_cmd","in_cmd_lp_p"]
+        ],
+        
+    "in_cmd_lp_p":
+        [
+            ["tk_separa","in_cmd","in_cmd_lp_p"],
+            ["e"]
+        ],
+
+    "in_cmd":
+        [
+            ["quantifiers_opt", "in_spec", "sync_expr_opt", "sched_expr_opt", "tk_ejecuta", "block"]
+        ],
+
+    "in_spec":
+        [
+            ["in_op","param_names"]
+        ],
+    
+    "in_op": #factor comun por izuierda
+        [
+            ["qualified_id", "in_op_p"],
+        ],
+
+    "in_op_p":
+        [
+            ["subscripts"],
+            ["e"],
+        ],
+
+    "sync_expr_opt": ## Se añade regla ya que existen dos tk_and
+        [
+            ["tk_and", "expr"],
+            ["tk_y", "expr"],
+            ["tk_suchthat","expr"],
+            ["e"]
+        ],
+    
+    "sched_expr_opt":
+        [
+            ["tk_by","expr"],
+            ["e"]
+        ],
 
     ############################### co statement ###############################
+    "concurrent_stmt":
+        [
+            ["tk_co", "concurrent_cmd_lp", "tk_oc"]
+        ],
+
+    "concurrent_cmd_lp": ###Se quita recursividad por izquierda
+        [
+            ["concurrent_cmd", "concurrent_cmd_lp_p"]
+        ],
+
+    "concurrent_cmd_lp_p":
+        [
+            ["tk_paralela", "concurrent_cmd" "concurrent_cmd_lp_p"], 
+            ["e"] 
+        ],
+
+    "concurrent_cmd":
+        [
+            ["quantifiers_opt", "separator_opt", "concurrent_invocation", "post_processing_opt"]
+        ],
+
+    "separator_opt": ## Se quita recursividad por izquierda Revisar!!
+        [
+            ["tk_punto_coma", "separator_opt"],
+            ["e"]
+        ],
+
+    "concurrent_invocation":
+        [
+            ["explicit_call"],
+            ["send_stmt"],
+            ["expr"]
+        ],
+
+    "post_processing_opt":
+        [
+            ["tk_ejecuta", "block"],
+            ["e"]
+        ],
 
     ############################### quantifier ###############################
+    "quantifiers_opt" :
+        [
+            ["tk_parentesis_izquierdo", "quantifier_lp", "tk_parentesis_derecho"],
+            ["e"]
+        ],
+
+    "quantifier_lp" : ###Se quita recursividad por izquierda
+        [
+            ["quantifier", "quantifier_lp_p"]
+        ],
+
+    "quantifier_lp_p" :
+        [
+            ["tk_coma", "quantifier", "quantifier_lp_p"],
+            ["e"]
+        ],
+
+    "quantifier" :
+        [
+            ["tk_id", "tk_asignacion", "expr", "direction", "expr", "step_opt", "such_that_opt"]
+        ],
+
+    "direction" :
+        [
+            ["tk_to"],
+            ["tk_downto"]
+        ],
+
+    "step_opt" :
+        [
+            ["tk_by", "expr"],
+            ["e"]
+        ],
+
+    "such_that_opt" :
+        [
+            ["tk_suchthat", "expr"],
+            ["e"]
+        ],
 
     ############################### expression ###############################
     "expr" :
         [
-            #literales
             ["tk_id", "expr_pp"],
+            #literales
             ["tk_numero", "expr_pp"],
             ["blit", "expr_pp"],
             ["tk_cadena", "expr_pp"],
@@ -514,6 +778,7 @@ gramatica = {
             ["tk_low", "tk_parentesis_izquierdo", "type_gram", "tk_parentesis_derecho", "expr_pp"],
             ["tk_high", "tk_parentesis_izquierdo", "type_gram", "tk_parentesis_derecho", "expr_pp"],
             ["tk_new", "tk_parentesis_izquierdo", "subscripts_opt", "new_item", "tk_parentesis_derecho", "expr_pp"],
+            # create_expr
             ["tk_create", "create_call", "location_opt", "expr_pp"]
         ],
 
@@ -559,7 +824,25 @@ gramatica = {
             ["tk_elevado"],
             ["tk_punto", "tk_id"],
             ["tk_parentesis_cuad_izquierdo", "bound_lp", "tk_parentesis_cuad_derecho"],
+            # invocation
             ["paren_list"]
+        ],
+
+    "new_item":
+        [
+            ["unsub_type"],
+            ["tk_sem","sem_proto"],
+            ["tk_op","op_prototype"]
+        ],
+
+    "paren_expr":
+        [
+            ["tk_parentesis_izquierdo", "expr", "tk_parentesis_derecho"]
+        ],
+
+    "invocation" :
+        [
+            ["expr", "paren_list"]
         ],
 
     "paren_list":
@@ -600,18 +883,6 @@ gramatica = {
             ["expr"],
             ["tk_parentesis_cuad_izquierdo", "expr", "tk_parentesis_cuad_derecho", "expr"]
         ],
-    
-    "paren_expr":
-        [
-            ["tk_parentesis_izquierdo", "expr", "tk_parentesis_derecho"]
-        ],
-
-    "new_item":
-        [
-            ["unsub_type"],
-            ["tk_sem","sem_proto"],
-            ["tk_op","op_prototype"]
-        ],
 
     "create_call":
         [
@@ -626,45 +897,62 @@ gramatica = {
 
     "location_opt":
         [
-            ["tk_on"],
+            ["tk_on", "expr"],
             ["e"]
         ],
 
-    ############################### miscellaneous ###############################
-    "qualified_id":
+    ############################### miscellaneous ############################### -- Revisar - (Revisado)
+    "qualified_id": #terminos en comun por izquierda
         [
             ["tk_id", "qualified_id_p"]
         ],
-
+    
     "qualified_id_p":
         [
             ["tk_punto", "tk_id"],
             ["e"]
         ],
+
+    "end_id":
+        [
+            ["tk_end","id_opt"]
+        ],
+
+    "id_opt":
+        [
+            ["tk_id"],
+            ["e"]
+        ],
     
-    "id_lp" :
+    "id_ls":
+        [
+            ["id_lp"],
+            ["e"]
+        ],
+    
+    "id_lp" : #recursion por izq
         [
             ["tk_id", "id_lp_p"]
         ],
 
     "id_lp_p":
         [
-            ["tk_coma", "tk_id"],
+            ["tk_coma", "tk_id","id_lp_p"],
             ["e"]
         ],
 
-    "id_subs_lp" :
+    "id_subs_lp" : #recursion por izq
         [
             ["id_subs", "id_subs_lp_p"]
         ],
         
     "id_subs_lp_p":
         [
-            ["tk_coma", "id_subs"],
+            ["tk_coma", "id_subs","id_subs_lp_p"],
             ["e"]
         ],
 
-    "id_subs":
+    "id_subs": #factor comun por izquierda
         [
             ["tk_id", "id_subs_p"]
         ],
@@ -675,7 +963,7 @@ gramatica = {
             ["e"]
         ],
 
-    "subscripts":
+    "subscripts": 
         [
             ["bracketed_list", "subscripts_opt"]
         ],
@@ -691,14 +979,14 @@ gramatica = {
             ["tk_parentesis_cuad_izquierdo", "bound_lp", "tk_parentesis_cuad_derecho"]
         ],
 
-    "bound_lp":
+    "bound_lp": #recursividad por izquierda
         [
             ["bounds", "bound_lp_p"]
         ],
     
     "bound_lp_p":
         [
-            ["tk_coma", "bounds"],
+            ["tk_coma", "bounds","bound_lp_p"],
             ["e"]
         ],
 

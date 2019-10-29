@@ -18,7 +18,7 @@ estados_aceptacion = {
     22 : ["tk_mas", 1],
     24 : ["tk_ejecuta", 0],
     25 : ["tk_menos", 1],
-    27 : ["tk_division", 0],
+    27 : ["tk_division", 1],
     28 : ["tk_modulo", 0],
     29 : ["tk_punto_coma", 0],
     30 : ["tk_punto", 0],
@@ -47,10 +47,8 @@ estados_aceptacion = {
     63 : ["tk_desplazar_izq",0],
     64 : ["tk_desplazar_der",0],
     65 : ["tk_elevado",0],
-
+    66 : ["tk_paralela",0]
 }
-
-
 
 tiene_lexema = [3, 5, 7, 9, 43]
 
@@ -98,7 +96,7 @@ def dt(estado, caracter):
         elif caracter == '*':
             return 26
         elif caracter == '/':
-            return 27
+            return 67
         elif caracter == '%':
             return 28
         elif caracter == ';':
@@ -234,7 +232,12 @@ def dt(estado, caracter):
         if caracter == "=":
             return 61
         else:
-            return 53        
+            return 53    
+    elif estado == 67:
+        if caracter == "/":
+            return 66
+        else: 
+            return 27    
     else:
         return -1
 
@@ -305,14 +308,17 @@ def appendToken(token,lexema,fila,columna):
     tokens_list.append(token)
 
 def clasificar_identificador(lexema):
-    if len(lexema) < 2:
+    if lexema == "V" or lexema == "P":
+        return True
+    elif len(lexema) < 2:
         return False
-    with open('reservadas.txt') as archivo:
-        flag = False
-        for line in archivo:
-            if lexema in line:
-                flag = True
-        return flag
+    else:
+        with open('reservadas.txt') as archivo:
+            flag = False
+            for line in archivo:
+                if lexema in line:
+                    flag = True
+            return flag
 
 #main()
 
