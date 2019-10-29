@@ -145,8 +145,8 @@ def isNotTerminal(symbol):
    
 """ def isNotTerminal(symbol):
      return re.match("[A-Z]",symbol[0]) """ 
-    
-simbolo_inicial = "expr"
+
+simbolo_inicial = "component"
 def main():
     inicializar_primeros()
     inicializar_siguientes()
@@ -156,9 +156,14 @@ def main():
     for w in gramatica.keys():
         calcular_siguientes(w) 
     calcular_predicciones()
+    # print("primeros")
+    # print(primeros)
+    # print("siguientes")
+    # print(siguientes)
     print("Predicciones")
     print(predicciones)
 
+main()
 
 
 
