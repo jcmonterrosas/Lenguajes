@@ -71,6 +71,8 @@ anterior = set("excepcionInicial")
 
 def calcular_siguientes(NoTerminal):
     global anterior
+    aux = siguientes.get(NoTerminal)
+    siguientes_aux.update({NoTerminal:aux})
     if(NoTerminal == simbolo_inicial):
         aux = siguientes.get(NoTerminal)
         aux.add("EOF")
@@ -86,21 +88,22 @@ def calcular_siguientes(NoTerminal):
                                 return siguientes.get(NoTerminal)
                             else: # si A y B son distintos
                                 #aca esta el bug
-                                if(NoTerminal == "subscripts"):
-                                    siguientes_B = siguientes.get("subscripts_opt")
-                                else:
-                                    if(anterior == siguientes.get(NT)):
-                                        return siguientes.get(NoTerminal)
+                                if(siguientes.get(NoTerminal) != siguientes_aux.get(NoTerminal)):
+                                    
+                                    if(NoTerminal == "subscripts"):
+                                        siguientes_B = siguientes.get("subscripts_opt")
                                     else:
-                                        
-                                        anterior = siguientes.get(NT)
-                                        print(NoTerminal)
-                                        print(anterior)
-                                        
-                                        siguientes_B = calcular_siguientes(NT) # NT -> alfa NoTerminal beta
-                                aux = siguientes.get(NoTerminal)
-                                aux = aux.union(siguientes_B)
-                                siguientes.update({NoTerminal:aux})
+                                        if(anterior == siguientes.get(NT)):
+                                            return siguientes.get(NoTerminal)
+                                        else:
+                                            
+                                            anterior = siguientes.get(NT)
+                                            
+                                            
+                                            siguientes_B = calcular_siguientes(NT) # NT -> alfa NoTerminal beta
+                                    aux = siguientes.get(NoTerminal)
+                                    aux = aux.union(siguientes_B)
+                                    siguientes.update({NoTerminal:aux})
                         else:   # Beta != e 
                             if(isNotTerminal(gramatica.get(NT)[rule][x+1])): # Si Beta es un no terminal
                                 primeros_beta = primeros.get(gramatica.get(NT)[rule][x+1])
@@ -110,10 +113,11 @@ def calcular_siguientes(NoTerminal):
                                 siguientes.update({NoTerminal:total})
                                 for q in primeros_beta:
                                     if("e" in q):
-                                        siguientes_B = calcular_siguientes(NT)
-                                        aux = siguientes.get(NoTerminal)
-                                        aux = aux.union(siguientes_B)
-                                        siguientes.update({NoTerminal:aux})
+                                        if(siguientes.get(NoTerminal) == siguientes_aux.get(NoTerminal)):
+                                            siguientes_B = calcular_siguientes(NT)
+                                            aux = siguientes.get(NoTerminal)
+                                            aux = aux.union(siguientes_B)
+                                            siguientes.update({NoTerminal:aux})
                             elif(not isNotTerminal(gramatica.get(NT)[rule][x+1])): # Si Beta es un terminal
                                 aux = siguientes.get(NoTerminal)
                                 aux.add(gramatica.get(NT)[rule][x+1])
@@ -165,8 +169,9 @@ def main():
     # print(primeros)
     # print("siguientes")
     # print(siguientes)
-    print("Predicciones")
-    print(predicciones)
+    #print("Predicciones")
+    #print(predicciones)
+    #print(predicciones.get())
 
 main()
 
