@@ -19,7 +19,6 @@ estados_aceptacion = {
     24 : ["tk_ejecuta", 0],
     25 : ["tk_menos", 1],
     27 : ["tk_division", 1],
-    28 : ["tk_modulo", 0],
     29 : ["tk_punto_coma", 0],
     30 : ["tk_punto", 0],
     31 : ["tk_corchete_izquierdo", 0],
@@ -34,20 +33,29 @@ estados_aceptacion = {
     47 : ["tk_diferente", 0],
     48 : ["tk_menos",0],
     50 : ["tk_swap",0],
-    51 : ["tk_exponente", 0],
     52 : ["tk_multiplicacion", 1],
     53 : ["tk_no",0],
     54 : ["tk_arroba",0],
     55 : ["tk_interrogacion",0],
     56 : ["tk_decremento",1],
     58 : ["tk_concatenacion",0],
-    59 : ["tk_o",1],
-    60 : ["tk_y",0],
     61 : ["tk_diferente",0],
-    63 : ["tk_desplazar_izq",0],
-    64 : ["tk_desplazar_der",0],
+    63 : ["tk_desplazar_izq",1],
+    64 : ["tk_desplazar_der",1],
     65 : ["tk_elevado",0],
-    66 : ["tk_paralela",0]
+    66 : ["tk_paralela",0],
+    69 : ["tk_aug_mas", 0],
+    71 : ["tk_aug_menos", 0],
+    73 : ["tk_aug_multiplicacion", 0],
+    75 : ["tk_aug_division", 0],
+    77 : ["tk_aug_modulo", 0],
+    79 : ["tk_aug_exponencial", 0],
+    81 : ["tk_aug_o", 0],
+    83 : ["tk_aug_y", 0],
+    90 : ["tk_modulo", 1],
+    91 : ["tk_exponente", 1],
+    92 : ["tk_o", 1],
+    93 : ["tk_y", 1],
 }
 
 tiene_lexema = [3, 5, 7, 9, 43]
@@ -168,6 +176,8 @@ def dt(estado, caracter):
     elif estado == 20:
         if caracter == '+':
             return 21
+        elif caracter == ':':
+            return 68
         else:
             return 22
     elif estado == 23:
@@ -177,13 +187,22 @@ def dt(estado, caracter):
             return 56
         elif re.match("\d", caracter):
             return 4
+        elif caracter == ':':
+            return 70
         else:
             return 25
     elif estado == 26:
         if caracter == "*":
             return 51
+        elif caracter == ':':
+            return 72
         else:
             return 52
+    elif estado == 28:
+        if caracter == ':':
+            return 76
+        else:
+            return 90
     elif estado == 33:
         if caracter == '=':
             return 34
@@ -195,7 +214,7 @@ def dt(estado, caracter):
         if caracter == '=':
             return 37
         elif caracter == '>':
-            return 64   
+            return 86   
         else:
             return 38
     elif estado == 39:
@@ -223,11 +242,23 @@ def dt(estado, caracter):
             return 50
         else:
             return 17
+    elif estado == 51:
+        if caracter == ':':
+            return 78
+        else:
+            return 91
     elif estado == 57:
         if caracter == "|":
-            return 58
+            return 84
+        elif caracter == ':':
+            return 80
         else:
-            return 59   
+            return 92   
+    elif estado == 60:
+        if caracter == ":":
+            return 82
+        else:
+            return 93
     elif estado == 62:
         if caracter == "=":
             return 61
@@ -236,8 +267,50 @@ def dt(estado, caracter):
     elif estado == 67:
         if caracter == "/":
             return 66
+        elif caracter == ':':
+            return 74
         else: 
-            return 27    
+            return 27   
+    elif estado == 68:
+        if caracter == "=":
+            return 69
+        else: 
+            return -1
+    elif estado == 70:
+        if caracter == "=":
+            return 71
+        else:
+            return -1
+    elif estado == 72:
+        if caracter == "=":
+            return 73
+        else:
+            return -1
+    elif estado == 74:
+        if caracter == "=":
+            return 75
+        else:
+            return -1
+    elif estado == 76:
+        if caracter == "=":
+            return 77
+        else:
+            return -1
+    elif estado == 78:
+        if caracter == "=":
+            return 79
+        else:
+            return -1
+    elif estado == 80:
+        if caracter == "=":
+            return 81
+        else:
+            return -1
+    elif estado == 82:
+        if caracter == "=":
+            return 83
+        else:
+            return -1
     else:
         return -1
 

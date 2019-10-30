@@ -3,13 +3,13 @@ gramatica = {
     "component" : 
         [
             ["comp_kwd", "tk_id", "component_p"], ##Se podria reducir mas cambiando comp_kwd por sus producciones
-            ["tk_body", "tk_id", "body_stmt_ls", "end_id", "tk_punto_coma"],
+            ["tk_body", "tk_id", "body_stmt_ls", "end_id"],
         ],
     
     "component_p" :
         [
-            ["spec_stmt_ls", "spec_body", "tk_punto_coma"],
-            ["comp_params", "body_stmt_ls", "end_id", "tk_punto_coma"]
+            ["spec_stmt_ls", "spec_body"],
+            ["comp_params", "body_stmt_ls", "end_id"]
         ],
 
     "comp_kwd" :
@@ -26,8 +26,7 @@ gramatica = {
     
     "spec_body_p" :
         [
-            ["body_stmt_ls", "end_id"],
-            ["tk_punto_coma"]
+            ["body_stmt_ls", "end_id"]
         ],
 
     "maybe_params" :
@@ -44,8 +43,7 @@ gramatica = {
     ############################### spec/body contents ###############################
     "spec_stmt_ls": ## quite recursividad por izquierda REVISAR
         [
-            ["spec_stmt","spec_stmt_ls_p"],
-           
+            ["spec_stmt","spec_stmt_ls_p"], 
         ],
         
     "spec_stmt_ls_p":
@@ -63,12 +61,12 @@ gramatica = {
 
     "body_stmt_ls":  ## quite recursividad por izquierda REVISAR
         [
-            ["body_stmt","body_stmt_ls_p"],
+            ["body_stmt", "body_stmt_ls_p"]
         ],
 
     "body_stmt_ls_p":
         [
-            ["tk_punto_coma","body_stmt","body_stmt_ls_p"],
+            ["tk_punto_coma", "body_stmt", "body_stmt_ls_p"],
             ["e"]
         ],
 
@@ -77,7 +75,7 @@ gramatica = {
             ["common_stmt"],
             ["expr"],
             ["body_only"],
-            ["extend_clause"],
+            ["extend_clause"]
         ],
     
     "body_only":
@@ -87,29 +85,29 @@ gramatica = {
             ["process"],
             ["procedure"],
             ["initial_block"],
-            ["final_block"],
+            ["final_block"]
         ],
         
     "common_stmt":
         [
             ["decl"],
             ["import_clause"],
-            ["e"],
+            ["e"]
         ],
 
     "import_clause":
         [
-            ["tk_import", "import_list"],
+            ["tk_import", "import_list"]
         ],
 
     "extend_clause": ## REVISAR EN GRAMATICA (IF)
         [
-            ["tk_extend", "import_list"],
+            ["tk_extend", "import_list"]
         ],
 
     "import_list": ## quite recursividad por izquierda REVISAR
         [
-            ["tk_id", "import_list_p"],
+            ["tk_id", "import_list_p"]
         ],
 
     "import_list_p":
@@ -316,13 +314,11 @@ gramatica = {
     ############################### declaration ###############################  ---Revisar (Revisado)
     "decl":
         [
-            ["tk_punto_coma"], 
             ["type_decl"],
             ["obj_decl"],
             ["optype_decl"],
             ["sem_decl"],
             ["op_decl"],
-
         ],
 
     "type_decl":
@@ -367,7 +363,8 @@ gramatica = {
         [
             ["tk_dos_puntos","type_gram","var_att_p"],
             ["tk_asignacion", "expr"],
-            ["tk_punto_coma"]
+            ["tk_punto_coma"],
+            ["e"],
         ],
 
     "var_att_p": 
@@ -530,7 +527,8 @@ gramatica = {
 
     "block":
         [
-            ["block_items"]
+            ["block_items"],
+            ["e"]
         ],
 
     "block_items": # Recursion por izquierda
@@ -550,7 +548,7 @@ gramatica = {
             ["stmt"],
             ["expr"],
             ["import_clause"],
-            ["e"],
+            ["e"]
         ],
     
     "stmt":
@@ -573,7 +571,7 @@ gramatica = {
             ["input_stmt"],
             ["tk_receive", "expr", "paren_list"],
             ["tk_P", "tk_parentesis_izquierdo", "expr", "tk_parentesis_derecho"],
-            ["concurrent_stmt"],
+            ["concurrent_stmt"]
         ],
 
     "stop_stmt":
@@ -584,12 +582,12 @@ gramatica = {
     "exit_code_opt":
         [ 
             ["tk_parentesis_izquierdo","expr","tk_parentesis_derecho"],
-            ["e"],
+            ["e"]
         ],
         
     "send_stmt":
         [
-            ["tk_send","invocation"],
+            ["tk_send","invocation"]
         ],
 
     "explicit_call":
@@ -599,7 +597,7 @@ gramatica = {
         
     "guarded_cmd_lp": #Recursion izquierda
         [
-            ["guarded_cmd","guarded_cmd_lp_p"],
+            ["guarded_cmd","guarded_cmd_lp_p"]
         ],
     
     "guarded_cmd_lp_p": 
@@ -649,13 +647,13 @@ gramatica = {
     
     "in_op": #factor comun por izuierda
         [
-            ["qualified_id", "in_op_p"],
+            ["qualified_id", "in_op_p"]
         ],
 
     "in_op_p":
         [
             ["subscripts"],
-            ["e"],
+            ["e"]
         ],
 
     "sync_expr_opt": ## Se añade regla ya que existen dos tk_and
@@ -722,7 +720,8 @@ gramatica = {
 
     "quantifier_lp" : ###Se quita recursividad por izquierda
         [
-            ["quantifier", "quantifier_lp_p"]
+            ["quantifier", "quantifier_lp_p"],
+            ["e"],
         ],
 
     "quantifier_lp_p" :
@@ -818,6 +817,15 @@ gramatica = {
             ["tk_desplazar_izq", "expr"],
             ["tk_swap", "expr"],
             ["tk_asignacion", "expr"],
+            ["tk_aug_mas","expr"],
+            ["tk_aug_menos","expr"],
+            ["tk_aug_multiplicacion","expr"],
+            ["tk_aug_division","expr"],
+            ["tk_aug_modulo","expr"],
+            ["tk_aug_exponencial","expr"],
+            ["tk_aug_o","expr"],
+            ["tk_aug_y","expr"],
+
             # suffix_expr
             ["tk_incremento"],
             ["tk_decremento"],
@@ -915,7 +923,7 @@ gramatica = {
 
     "end_id":
         [
-            ["tk_end","id_opt"]
+            ["tk_end", "id_opt"]
         ],
 
     "id_opt":
@@ -954,7 +962,7 @@ gramatica = {
 
     "id_subs": #factor comun por izquierda
         [
-            ["tk_id", "id_subs_p"]
+            ["tk_id", "id_subs_p"],
         ],
     
     "id_subs_p" :
@@ -967,13 +975,13 @@ gramatica = {
         [
             ["bracketed_list", "subscripts_opt"]
         ],
-
+    
     "subscripts_opt":
-        [   
+        [
             ["subscripts"],
             ["e"]
         ],
-    
+
     "bracketed_list":
         [
             ["tk_parentesis_cuad_izquierdo", "bound_lp", "tk_parentesis_cuad_derecho"]
