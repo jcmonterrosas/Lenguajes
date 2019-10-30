@@ -917,7 +917,7 @@ gramatica = {
     
     "qualified_id_p":
         [
-            ["tk_punto", "tk_id"],
+            ["tk_dos_puntos", "tk_id"],
             ["e"]
         ],
 

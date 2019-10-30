@@ -1766,7 +1766,7 @@ def qualified_id_p():
     global token
     print("qualified_id_p")
     if token in predicciones.predicciones["qualified_id_p"][0]:
-        token = emparejar("tk_punto")
+        token = emparejar("tk_dos_puntos")
         token = emparejar("tk_id")
     elif token not in predicciones.predicciones["qualified_id_p"][1]:
         error(predicciones.predicciones["qualified_id_p"])

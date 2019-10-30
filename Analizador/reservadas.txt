@@ -23,10 +23,10 @@ op
 do
 od
 proc                     
-co  
+co 
 oc
-cap  
-send  
+cap 
+send
 destroy  
 begin
 end      

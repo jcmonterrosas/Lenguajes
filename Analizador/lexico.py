@@ -313,10 +313,9 @@ def dt(estado, caracter):
             return -1
     else:
         return -1
-
     
 def main():
-    filepath = 'ejemplo.txt'
+    filepath = '4.txt'
     fila = 0
 
     with open(filepath,encoding="utf-8") as archivo:   
@@ -386,10 +385,16 @@ def clasificar_identificador(lexema):
     elif len(lexema) < 2:
         return False
     else:
+        lexema = lexema.replace("\n", "")
+        lexema = lexema.replace(" ", "")
+        lexema = lexema.replace("\t", "")
         with open('reservadas.txt') as archivo:
             flag = False
             for line in archivo:
-                if lexema in line:
+                line = line.replace("\n", "")
+                line = line.replace(" ", "")
+                line = line.replace("\t", "")   
+                if lexema == line :
                     flag = True
             return flag
 
